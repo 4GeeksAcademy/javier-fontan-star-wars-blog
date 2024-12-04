@@ -1,43 +1,37 @@
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
-			demo: [
-				{
-					title: "FIRST",
-					background: "white",
-					initial: "white"
-				},
-				{
-					title: "SECOND",
-					background: "white",
-					initial: "white"
-				}
-			]
+			people: [],
+			person: null,
+			url: 'https://www.swapi.tech/api/'
+			
 		},
 		actions: {
-			// Use getActions to call a function within a fuction
-			exampleFunction: () => {
-				getActions().changeColor(0, "green");
-			},
-			loadSomeData: () => {
-				/**
-					fetch().then().then(data => setStore({ "foo": data.bar }))
-				*/
-			},
-			changeColor: (index, color) => {
-				//get the store
-				const store = getStore();
 
-				//we have to loop the entire demo array to look for the respective index
-				//and change its color
-				const demo = store.demo.map((elm, i) => {
-					if (i === index) elm.background = color;
-					return elm;
-				});
+			loadPeople: async () => {
+				try {
+					const resp = await fetch(getStore( ).url+'people');
+					if (!resp.ok) throw new Error('Error loading data');
+					const data = await resp.json()
+					console.log(data)
+					setStore({people: data.results})
+				} catch (error) {
+					console.log(error);
+				}
+			},
 
-				//reset the global store
-				setStore({ demo: demo });
-			}
+			loadPerson: async (uid) => {
+				try {
+					const resp = await fetch(getStore( ).url+'people/'+uid);
+					if (!resp.ok) throw new Error('Error loading data');
+					const data = await resp.json()
+					console.log(data)
+					setStore({person: data.result})
+				} catch (error) {
+					console.log(error);
+				}
+			} 
+	
 		}
 	};
 };
